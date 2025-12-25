@@ -1,0 +1,82 @@
+Py spark tutorial (basics to advance)
+
+1.spark 
+# use to connect spark session
+
+2. df = spark.table("workspace.default.movies")
+   display(df)
+  # use to load table into dataframe 
+  # display shows proper and formatted table
+  
+3.   df.show(5)
+	# faster to access than display but 
+	
+4. df.printSchema()
+	# print Schema of the table
+	
+5. df.count()
+	#  shows the count of no of rows present in table 
+	
+6. df.columns
+	# give the list of columns names present in table like python  lis
+	
+	
+7. display(df.describe())
+#  give summary of the table like mean median mode stddev and count
+
+8. display(df.summary())
+# similar to describe but also shows additional data like quartiles of 25 , 50 , 75 , max , min
+
+  
+## column filtering
+ 
+1. df_trimmed = df.select("title", "imdb_rating" , "industry" )
+    df.trimmed.show(3, truncate=True)
+
+# these are immutable and used to see specific columns form the tables
+# truncate function is false used to show detalied view about title
+# but if truncate true then it is used to title in compact manner 
+
+
+## Row filtering 
+
+Q1 . show me all movie released between 2000 to 2010
+
+solution 1
+df_filtered = df.filter((df["release_year"] >= 2000 ) & (df["release_year"] <= 2010 ))
+display(df.filtered)
+
+solution 2
+from pyspark.sql.functions import col
+
+df_filtered = df.filter((col("release_year") >= 2000 ) & (col("release_year") <= 2010))
+df_filtered.show()
+
+solution 3
+df_filtered = df.filter(col("release_year").between(2000,2010))
+display(df_filtered)
+
+Q2 . show all movies which have studio as marvel studios 
+
+df_marvel = df.filter(col("studio") == "Marvel Studios")
+df_marvel.show()
+
+Q3. show all unique industry present in table
+unique_industries = df.select("industry").distinct()
+display(unique_industries)
+
+Q4. show all unique languages in which movie is made
+ unique_language = df.select("language").distinct()
+ display(unique_language)
+ 
+Q5. create a new column named as profit to show earned profit from movies
+
+df = df.withcolummn('profit',col('revenue') - col('budget'))
+display(df)
+# withcolummn is used to create a new column in table 
+
+
+Q6 rename column from revenue to total revenue in table 
+df = df.withColumnRenamed('revenue',"total_revenue")
+df.printSchema()
+
